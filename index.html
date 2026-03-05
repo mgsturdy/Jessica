@@ -1159,7 +1159,7 @@
     const mute1 = document.getElementById('muteLine1');
     const mute2 = document.getElementById('muteLine2');
 
-    let volume = 0.5;
+    let volume = 0;
     let isMobile = window.innerWidth <= 768;
     window.addEventListener('resize', () => { isMobile = window.innerWidth <= 768; });
 
@@ -1190,8 +1190,8 @@
     }
 
     video.volume = 0.5;
-    video.muted = false;
-    updateVolumeUI(0.5);
+    video.muted = true;
+    updateVolumeUI(0);
 
     toggle.addEventListener('click', () => {
       if (volume < 0.01) {
