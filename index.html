@@ -715,20 +715,62 @@
       .about-visual { max-height: 400px; aspect-ratio: auto; }
       .cap-grid { grid-template-columns: 1fr 1fr; }
       .how-steps { grid-template-columns: 1fr 1fr; gap: 40px; }
+      .capabilities-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+      .capabilities-header .section-desc { text-align: left; }
     }
 
     @media (max-width: 768px) {
-      nav { padding: 20px 24px; }
-      nav.scrolled { padding: 16px 24px; }
+      nav { padding: 20px 20px; }
+      nav.scrolled { padding: 16px 20px; }
+      .nav-links { gap: 16px; }
       .nav-links a:not(.nav-cta) { display: none; }
-      section { padding: 100px 24px; }
-      .hero-content { padding: 0 24px; }
+      .nav-cta { padding: 8px 20px !important; font-size: 0.72rem !important; }
+
+      section { padding: 80px 20px; }
+
+      .hero { min-height: 100svh; }
+      .hero-content { padding: 0 20px; max-width: 100%; }
+      .hero-tag { font-size: 0.65rem; margin-bottom: 24px; }
+      .hero-title { font-size: clamp(3.2rem, 12vw, 5rem); }
+      .hero-line { margin: 28px 0; width: 60px; }
+      .hero-sub { font-size: 0.92rem; max-width: 100%; }
+      .hero-scroll { bottom: 28px; }
+
+      .marquee-section { padding: 20px 0; }
+      .marquee-item { padding: 0 24px; gap: 16px; }
+      .marquee-item span { font-size: 0.9rem; }
+
+      .about-visual { max-height: 300px; }
+      .orb-container { width: 180px; height: 180px; }
+      .about-stats { grid-template-columns: 1fr 1fr; gap: 20px; }
+      .stat-value { font-size: 2rem; }
+
       .cap-grid { grid-template-columns: 1fr; }
-      .how-steps { grid-template-columns: 1fr; }
-      .pricing-card { padding: 48px 28px; }
-      .pricing-features { grid-template-columns: 1fr; }
+      .cap-card { padding: 36px 24px; }
+
+      .how-steps { grid-template-columns: 1fr; gap: 36px; }
+      .how-header { margin-bottom: 60px; }
+      .step-num { font-size: 2.8rem; }
+
+      .pricing-card { padding: 48px 24px; }
+      .pricing-features { grid-template-columns: 1fr; gap: 8px; }
+      .pricing-features li { font-size: 0.85rem; padding: 10px 0; }
+
+      .btn-primary { padding: 16px 40px; font-size: 0.78rem; width: 100%; text-align: center; }
+
+      .cta-section { padding-bottom: 100px; }
+      .cta-title { font-size: clamp(2rem, 8vw, 3rem); }
+
+      footer { flex-direction: column; gap: 20px; text-align: center; padding: 36px 20px; }
+    }
+
+    @media (max-width: 420px) {
+      .hero-title { font-size: 2.8rem; }
+      .hero-sub { font-size: 0.85rem; line-height: 1.65; }
+      .section-title { font-size: clamp(1.8rem, 7vw, 2.4rem); }
       .about-stats { grid-template-columns: 1fr; }
-      footer { flex-direction: column; gap: 20px; text-align: center; }
+      .stat { padding: 20px 0; }
+      .pricing-amount { font-size: 3rem; }
     }
   </style>
 </head>
@@ -748,8 +790,8 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-video-wrap">
-      <video autoplay muted loop playsinline poster="">
-        <source src="https://cdn.coverr.co/videos/coverr-aerial-view-of-city-at-night-1573/1080p.mp4" type="video/mp4">
+      <video autoplay muted loop playsinline>
+        <source src="jessica.mp4" type="video/mp4">
       </video>
     </div>
     <div class="hero-overlay"></div>
