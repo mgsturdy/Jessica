@@ -661,6 +661,106 @@
       margin: 0 auto 40px;
     }
 
+    /* ─── VOLUME CONTROL ─── */
+    .volume-control {
+      position: fixed;
+      right: 36px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      opacity: 0;
+      animation: fadeUp 1s 2s forwards;
+    }
+
+    .volume-icon {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+
+    .volume-icon svg {
+      width: 100%;
+      height: 100%;
+      fill: none;
+      stroke: var(--gold);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .volume-icon:hover svg { stroke: var(--gold-light); }
+
+    .volume-slider-wrap {
+      width: 3px;
+      height: 120px;
+      background: rgba(201, 169, 110, 0.15);
+      border-radius: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .volume-fill {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      border-radius: 2px;
+      background: var(--gold);
+      height: 0%;
+      transition: height 0.15s ease;
+    }
+
+    .volume-knob {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px rgba(201, 169, 110, 0.4);
+      bottom: 0%;
+      transition: bottom 0.15s ease;
+      cursor: grab;
+    }
+
+    .volume-knob:active { cursor: grabbing; }
+
+    .volume-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(201, 169, 110, 0.5);
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+    }
+
+    @media (max-width: 768px) {
+      .volume-control {
+        right: 16px;
+        top: auto;
+        bottom: 28px;
+        transform: none;
+        flex-direction: row;
+        gap: 12px;
+      }
+      .volume-slider-wrap { width: 80px; height: 3px; }
+      .volume-fill { width: 0%; height: 100%; bottom: auto; left: 0; }
+      .volume-knob {
+        bottom: auto;
+        left: 0%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .volume-label { writing-mode: horizontal-tb; transform: none; }
+    }
+
     /* ─── FOOTER ─── */
     footer {
       border-top: 1px solid rgba(201, 169, 110, 0.1);
@@ -993,6 +1093,24 @@
     </div>
   </section>
 
+  <!-- VOLUME CONTROL -->
+  <div class="volume-control" id="volumeControl">
+    <div class="volume-icon" id="volumeToggle">
+      <svg id="volumeIconSvg" viewBox="0 0 24 24">
+        <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+        <line x1="23" y1="9" x2="17" y2="15" id="muteLine1" style="display:none"/>
+        <line x1="17" y1="9" x2="23" y2="15" id="muteLine2" style="display:none"/>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14" id="wave2" style="display:none"/>
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07" id="wave1" style="display:none"/>
+      </svg>
+    </div>
+    <div class="volume-slider-wrap" id="volumeSlider">
+      <div class="volume-fill" id="volumeFill"></div>
+      <div class="volume-knob" id="volumeKnob"></div>
+    </div>
+    <div class="volume-label">Volume</div>
+  </div>
+
   <!-- FOOTER -->
   <footer>
     <div class="nav-logo">JESSICA</div>
@@ -1014,8 +1132,81 @@
         }
       });
     }, { threshold: 0.15 });
-
     reveals.forEach(el => observer.observe(el));
+
+    // Volume control
+    const video = document.querySelector('.hero-video-wrap video');
+    const slider = document.getElementById('volumeSlider');
+    const fill = document.getElementById('volumeFill');
+    const knob = document.getElementById('volumeKnob');
+    const toggle = document.getElementById('volumeToggle');
+    const wave1 = document.getElementById('wave1');
+    const wave2 = document.getElementById('wave2');
+    const mute1 = document.getElementById('muteLine1');
+    const mute2 = document.getElementById('muteLine2');
+
+    let volume = 0;
+    let isMobile = window.innerWidth <= 768;
+    window.addEventListener('resize', () => { isMobile = window.innerWidth <= 768; });
+
+    function updateVolumeUI(vol) {
+      const pct = vol * 100;
+      if (isMobile) {
+        fill.style.height = '100%';
+        fill.style.width = pct + '%';
+        knob.style.bottom = 'auto';
+        knob.style.left = pct + '%';
+      } else {
+        fill.style.width = '100%';
+        fill.style.height = pct + '%';
+        knob.style.left = '50%';
+        knob.style.bottom = pct + '%';
+      }
+      wave1.style.display = vol > 0.01 ? 'block' : 'none';
+      wave2.style.display = vol > 0.4 ? 'block' : 'none';
+      mute1.style.display = vol < 0.01 ? 'block' : 'none';
+      mute2.style.display = vol < 0.01 ? 'block' : 'none';
+    }
+
+    function setVolume(vol) {
+      volume = Math.max(0, Math.min(1, vol));
+      video.muted = volume < 0.01;
+      video.volume = volume;
+      updateVolumeUI(volume);
+    }
+
+    updateVolumeUI(0);
+
+    toggle.addEventListener('click', () => {
+      if (volume < 0.01) {
+        setVolume(0.5);
+      } else {
+        setVolume(0);
+      }
+    });
+
+    function getVolFromEvent(e) {
+      const rect = slider.getBoundingClientRect();
+      if (isMobile) {
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      } else {
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return Math.max(0, Math.min(1, (rect.bottom - clientY) / rect.height));
+      }
+    }
+
+    let dragging = false;
+
+    slider.addEventListener('mousedown', (e) => { dragging = true; setVolume(getVolFromEvent(e)); });
+    knob.addEventListener('mousedown', (e) => { dragging = true; e.preventDefault(); });
+    window.addEventListener('mousemove', (e) => { if (dragging) setVolume(getVolFromEvent(e)); });
+    window.addEventListener('mouseup', () => { dragging = false; });
+
+    slider.addEventListener('touchstart', (e) => { dragging = true; setVolume(getVolFromEvent(e)); }, { passive: true });
+    knob.addEventListener('touchstart', (e) => { dragging = true; }, { passive: true });
+    window.addEventListener('touchmove', (e) => { if (dragging) setVolume(getVolFromEvent(e)); }, { passive: true });
+    window.addEventListener('touchend', () => { dragging = false; });
   </script>
 
 </body>
