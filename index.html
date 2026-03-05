@@ -110,6 +110,12 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    .hero-video-wrap video.loaded {
+      opacity: 1;
     }
 
     .hero-overlay {
@@ -1118,6 +1124,14 @@
   </footer>
 
   <script>
+    const heroVideo = document.querySelector('.hero-video-wrap video');
+    heroVideo.addEventListener('canplaythrough', () => {
+      heroVideo.classList.add('loaded');
+    });
+    if (heroVideo.readyState >= 4) {
+      heroVideo.classList.add('loaded');
+    }
+
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 60);
