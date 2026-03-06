@@ -921,7 +921,7 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-video-wrap">
-      <video autoplay muted playsinline>
+      <video autoplay muted loop playsinline>
         <source src="jessica.mp4" type="video/mp4">
       </video>
     </div>
@@ -1255,11 +1255,16 @@
     window.addEventListener('touchmove', (e) => { if (dragging) setVolume(getVolFromEvent(e)); }, { passive: true });
     window.addEventListener('touchend', () => { dragging = false; });
 
-    // Replay button
+    // Mute after first play, replay restarts with sound
+    video.addEventListener('ended', () => {
+      setVolume(0);
+    });
+
     const replayBtn = document.getElementById('replayBtn');
     replayBtn.addEventListener('click', () => {
       video.currentTime = 0;
       video.play();
+      setVolume(0.5);
     });
   </script>
 
